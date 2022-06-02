@@ -16,7 +16,7 @@ def Normalize(interface, klines):
 			max_p = float(bar[2])
 		if float(bar[3]) < min_p:
 			min_p = float(bar[3])
-	interface.mormalize(max_p, min_p, 100)
+	interface.Normalize(max_p, min_p, 100)
 	#print(max_p, min_p)
 
 def ShowGraph(interface, klines):
