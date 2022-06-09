@@ -56,9 +56,9 @@ class TimeSeries(object):
 			out_array.append(sma_sum / level)
 		return out_array
 	
-	# 
-	# input:  ...
-	# output: ...
+	# LWMA (lienar weighted moving average)
+	# input:  array of states [count] , level - level of blending
+	# output: LWMA blended array of states [count - level, + 1]
 	def Blend_LWMA(self, inp_array, level):
 		if level > len(inp_array):
 			return []
@@ -76,32 +76,39 @@ class TimeSeries(object):
 			out_array.append(lwma_sum)
 		
 		return out_array
-	'''
-	# 
-	# input:  ...
-	# output: ...
-	def Blend_WMA(self, inp_array, weight_array, level):
+	
+	# EMA (exponentially weighted moving average)
+	# input:  array of states [count], level - level of blending, alpha - coeff of blending (used one of level/alpha, level is primary)
+	# output: EMA blended array of states [count]
+	def Blend_EMA(self, inp_array, level, alpha = -1):
 		if level > len(inp_array):
 			return []
 		out_array = []
+		out_array.append(inp_array[0])
+		f_alpha = alpha
+		if alpha < 0:
+			f_alpha = 2 / (level + 1)
+		
+		for i in range(1, len(inp_array)):
+			out_array.append(out_array[i - 1] + f_alpha * (inp_array[i] - out_array[i - 1]))
 		
 		return out_array
 	
-	# 
-	# input:  ...
-	# output: ...
-	def Blend_WMA(self, inp_array, weight_array):
+	# DMA (double exponentially weighted moving average)
+	# input:  array of states [count], level - level of blending, alpha - coeff of blending (used one of level/alpha, level is primary)
+	# output: DMA blended array of states [count]
+	def Blend_DMA(self, inp_array, level, alpha = -1):
 		if level > len(inp_array):
 			return []
-		out_array = []
 		
-		return out_array
+		return self.Blend_EMA(self.Blend_EMA(inp_array, level, alpha), level, alpha)
 	
-	# 
-	# input:  ...
-	# output: ...
-	def Blend_EMA(self, inp_array):
-		out_array = []
+	# TMA (triple exponentially weighted moving average)
+	# input:  array of states [count], level - level of blending, alpha - coeff of blending (used one of level/alpha, level is primary)
+	# output: TMA blended array of states [count]
+	def Blend_TMA(self, inp_array, level, alpha = -1):
+		if level > len(inp_array):
+			return []
 		
-		return out_array
-	'''
+		return self.Blend_EMA(self.Blend_DMA(inp_array, level, alpha), level, alpha)
+	
